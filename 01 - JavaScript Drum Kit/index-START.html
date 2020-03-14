@@ -64,7 +64,7 @@ as a parameter.
   function playSound(e) {
     /*
     Inside a function we declare a constant named audio. Using querySelector on the document we get ahold of the
-    attribute selector that's named data-key in audio. We then assign it's value as the keyCode of the event.
+    attribute selector that's named data-key in audio. We then assign its value as the keyCode of the event.
     With this, we now have hold of the key that's being pressed to play the respective sound associated with
     that keyCode.
     */
@@ -72,7 +72,7 @@ as a parameter.
     /*
     We do something similar here.
     We get ahold of the class key and select the current one that is being pressed by using attribute selector.
-    This is so we can add the cllass 'playing' to the div with the class .key once a certain key is pressed. 
+    This is so we can add the class 'playing' to the div with the class .key once a certain key is pressed. 
     */
     const key = document.querySelector(`.key[data-key = "${e.keyCode}"]`);
 
@@ -98,6 +98,7 @@ as a parameter.
   This way, once a key is activated, the effect will be removed once the function is invoked.
   */ 
   function removeTransition(e) {
+    console.log(e)
     if (e.propertyName !== 'transform') return;
     this.classList.remove('playing');
   }
@@ -133,3 +134,4 @@ as a parameter.
   });
 
 -->
+
