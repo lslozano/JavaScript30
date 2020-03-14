@@ -58,9 +58,78 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+/*In order for our Drum Kit to work, we declare a function called playSound which will receive an event
+as a parameter.
+*/
+  function playSound(e) {
+    /*
+    Inside a function we declare a constant named audio. Using querySelector on the document we get ahold of the
+    attribute selector that's named data-key in audio. We then assign it's value as the keyCode of the event.
+    With this, we now have hold of the key that's being pressed to play the respective sound associated with
+    that keyCode.
+    */
+    const audio = document.querySelector(`audio[data-key = "${e.keyCode}"]`);
+    /*
+    We do something similar here.
+    We get ahold of the class key and select the current one that is being pressed by using attribute selector.
+    This is so we can add the cllass 'playing' to the div with the class .key once a certain key is pressed. 
+    */
+    const key = document.querySelector(`.key[data-key = "${e.keyCode}"]`);
+
+    if (!audio) return;  //If there is no audio being played, stop the function from running.
+
+    //We set the current time of our audio to zero each time the function is executed so the audio can 
+    //start as many times as the keys are pressed. If this is not done, the audio will only play again
+    //once it's finished.
+    audio.currentTime = 0
+
+    //Each time a key is pressed, the audio will play.
+    audio.play()
+
+    //When an audio exists, add the class playing to the div that already hast the .key class.
+    key.classList.add('playing')
+  }
+
+  /*This function helps remove the effect of the key being activated.
+  It receives an event.
+  So if the propertyName inside event is not transform, return and stop the function from executing.
+  But, if the propertyName is equal to transform, by refering the object div itself with "this"
+  and accessing the classList and remove method, we remove from it the class 'playing'. 
+  This way, once a key is activated, the effect will be removed once the function is invoked.
+  */ 
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return;
+    this.classList.remove('playing');
+  }
+
+  /*
+  Declare a constant named key which will get ahold of all the elements that have .key class in them.
+  Iterate key with a forEach and on each element add an event listener for 'transitionend'. 
+  When that happens, execute removeTransition function.
+  */
+  const key = document.querySelectorAll('.key')
+  key.forEach(key => key.addEventListener('transitionend', removeTransition));
+
+  /*
+  Finally, we declare our addEventListener on our window for 'keydown' and execute our playSound function
+  each time a key is pressed.
+  */
+  window.addEventListener('keydown', playSound);
 
 </script>
 
-
 </body>
 </html>
+
+<!--
+  This was my first approach to remove the class .playing once my div contained it, but this way it was
+  removed immediatly and the desired effect did not happen.
+
+    window.addEventListener('keyup', function(e) {
+    const key = document.querySelector(`.key[data-key = "${e.keyCode}"]`);
+    if (key.classList.contains('playing')) {
+      key.classList.remove('playing')
+    }
+  });
+
+-->
