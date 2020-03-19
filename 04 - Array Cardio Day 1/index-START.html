@@ -31,28 +31,201 @@
 
     // Array.prototype.filter()
     // 1. Filter the list of inventors for those who were born in the 1500's
+    /*
+    We declare a constant that will be a new array containing only the elements that pass our specific test.
+    Since we only need the inventors who were born in the 1500's, we need to apply a filter method in the 
+    inventors array.
+    It will check each of the elements in the inventors array and since everyone of them is an object
+    with different keys, we select the key named year.
+    In our conditions, we check if year is equal or greater than 1500 and equal or less than 1599.
+    Every element that pass this tests, will form our new array called fifteenHundred
+    */
+    const fifteenHundred = inventors.filter(inventor => inventor.year >= 1500 && inventor.year <= 1599)
+    //Table allows us to print the data in an object as a table, nicely organized.
+    console.table(fifteenHundred)
+
+    /*
+    Wes Bos first approach was as follows:
+    const fifteen = inventors.filter(function(inventor) {
+      if (inventor.year >= 1500 && inventor.year <= 1599) {
+        return true
+      }
+    })
+    When it returns true, we will keep the element in the new array. There is no need to return false.
+    */
 
     // Array.prototype.map()
     // 2. Give us an array of the inventors first and last names
 
+    /*
+    We declare a constant called fullNames that will be an array containing only the first and last name 
+    of each inventor. To do this, we set it's value as the inventors array accessing the method map and returning
+    a string formed by inventor first name and last name. We do this using back ticks and string interpolation.
+    So in each iteration, it will give us a string element containing this two values.
+    */
+    const fullNames =  inventors.map(inventor => `${inventor.first} ${inventor.last}`)
+    //expected output: firstLastName = ['Albert Eistein', ...]
+    console.log(fullNames)
+
     // Array.prototype.sort()
     // 3. Sort the inventors by birthdate, oldest to youngest
+
+    /*
+    For this we declare a constant named sort. We give it the value of inventors and access the sort 
+    method of the array and compare element one to element two.
+    They will be arranged in ascending order.
+    If a - b equals 0, they stay the same.
+    If a - b equals less than 0, b is greater than a so a goes first than b.
+    If a - b equals more than 0, b is less than a so b goes first than a.
+    */
+    const ordered = inventors.sort((a, b) => a.year - b.year)
+    //Expected output: 
+    console.table(ordered)
+
+    /*
+    This was Wes Bos first approach:
+    const ordered = inventors.sort(function (a, b) {
+      if (a.year > b.year) {
+        return 1
+      } else {
+        return -1
+      }
+    })
+
+    Second approach:
+    const ordered = inventors.sort((a, b) => a.year > b.year ? 1 : -1)
+    */
 
     // Array.prototype.reduce()
     // 4. How many years did all the inventors live all together?
 
+    /*
+    To do this, we declare a constant named totalYears. It's value will be equal to applying the reduce method to inventors.
+    We then establish the total of years lived and the inventor. 
+    To get the desired result we add up total to the difference between the year where the inventor passed and the year it was born, giving as a result
+    the number of years each inventor lived.
+    It is important to note that since the first time around we do not have a total, it will be undefined. So we need to specify it's value to 0
+    */
+    const totalYears = inventors.reduce((total, inventor) => {
+      return total + (inventor.passed - inventor.year)
+    }, 0)
+
+    console.log(totalYears)
+
+    /*
+    This was my first approach but after watching the video I realized it is wrong, since it only adds up the birthdates of each inventors
+    and not the years each one of them lived:
+    const totalYears = inventors.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue.year
+    }, 0)
+
+    console.log(totalYears)
+    */
+
+
     // 5. Sort the inventors by years lived
+
+    /*
+    Declare a constant named yearsLived that will be equal to the array inventors applying the sort method.
+    Since we want to sort them by the years they lived, we need to compare the result of substracting to the year they passed the year they were born.
+    This will sort them from the inventor who lived the less to the most.
+
+    The way this is setup is from more years lived to less years lived.
+    */
+    const yearsLived = inventors.sort((a, b) => (b.passed - b.year) - (a.passed - a.year))
+    console.table(yearsLived)
+
+    /*
+    Wes Bos first approach:
+    const oldest = inventors.sort(function(a, b) {
+      const lastGuy = a.passed - a.year
+      const nextGuy = b.passed - b.year
+
+      if(lastGuy > nextGuy) {
+        return -1
+      } else {
+        return 1
+      }
+    })
+
+    He simplified this by using a ternary operator instead of the if statement
+    return lastGuy > nextGuy ? -1 : 1
+    */
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
     // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
 
+    //Category selects all elements that has mw-category class
+    
+    const category = document.querySelector('.mw-category')
+    
+    //We make an array called links that inlcude all the links in category.
+    
+    const links = Array.from(category.querySelectorAll('a'))
+    
+    //As we can see. We can call querySelector on any existing DOM element. It doesn't always have to be document.
+    
+    /*
+    You can also use spread operator:
+    links = [...category.querySelectorAll('a')]
+    Both convert the links variable to an array since at first it is a Node List
+    and it does not have all the array methods like map. 
+    */
+    
+    /*
+    Now to find all the Boulevards that contain the word 'de' we create a constant called de equal to the links applying map method (returning a new
+    array) concatenating with a filter method to make sure only the Boulevards that contain 'de' pass to our new array.
+    */
+    
+    const de = links
+                  .map(link => link.textContent)
+                  .filter(streetName => streetName.includes('de'))
+    
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
 
+    /*
+    Create a constant named sortedLastName equal to the array people accessing the method sort.
+    It will use two parameters, person and nextPerson.
+    First, we destructure in an array the last name and first name of person, accessing the method 
+    split. Splitting by the comma and space.
+    As a next step, we again do this but for the nextPerson.
+    Now we have hold of the last names of element in the array person.
+    Lastly, we return the order of aLastName - bLastName.
+    Remember that sort takes the UTF-16 code units values of the strings.
+    */
+    const sortedLastName = people.sort((person, nextPerson) => {
+      const [aLastName, aFirstName] = person.split(', ')
+      const [bLastName, bFirstName] = nextPerson.split(', ')
+      return aLastName - bLastName
+    })
+
+    console.log(sortedLastName)
+
+
     // 8. Reduce Exercise
     // Sum up the instances of each of these
     const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
+
+    /*
+    Create a constant named transportation to store the object which will track how many
+    instances of each transport exists.
+    Us the reduce method on data. Pass object and item.
+    Set the initial value as an empty object.
+    Check if obj[item] does not exists, create an instance of it with a value of 0.
+    If it exists, then add 1.
+    When the method finishes executing, return object.
+    */
+    const transportation = data.reduce((obj, item) => {
+      if (!obj[item]) {
+        obj[item] = 0
+      }
+      obj[item]++
+      return obj
+    }, {});
+
+    console.log(transportation);
 
   </script>
 </body>
