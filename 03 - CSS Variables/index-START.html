@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
   <title>Scoped CSS Variables and JS</title>
 </head>
 <body>
@@ -22,18 +23,43 @@
 
   <style>
     
+    /*
+    Note: 
+    All this style and variables can be declared in a separate CSS file, but for the
+    sake of the course and how it is done, I will leave them here with their comments.
+    It is best to have each thing in it's own files. 
+    Separation of concerns.*/
+
+    /*Declare CSS Variables on some sort of element. Here we
+    declare it on root. This is the highest level that we can get.
+    Very similar as declaring on the HTML element.*/
     :root {
+      /*We select the element root with the previous declaration. And inside it
+      we declare the variables that we are going to be using. The way variables are
+      declared in CSS is as follows:*/
       --base: #ffc600;
       --spacing: 10px;
       --blur: 10px;
+      /*The variable names are self explanatory.*/
     }
 
     img {
+      /*Now to use the variables that we declared in the root element in another one, first we
+      have to select it. In this example, we select the image elements by
+      declaring img, opening curly braces and inside declaring the properties we want our variables to be
+      applied.
+      So, to use the variable we need to declare it with var, parenthesis, two dashes and pass the 
+      name of the variable. The dash dash is equivalent to the dollar sign in SASS. 
+      This is a convention to make our variables backwards compatible.
+      For our filter, we want to give it a blur effect, so we need to first
+      declare this and then proceed to use our variable.*/
       padding: var(--spacing);
       background: var(--base);
-      filter: var(--blur);
+      filter: blur(var(--blur));
     }
 
+    /*Now we specify that everything with a class of .hl (highlight) 
+    will have a color equal to our variable --base.*/
     .hl {
       color: var(--base)
     }
@@ -58,19 +84,77 @@
     input {
       width: 100px;
     }
+
   </style>
 
   <script>
 
+    /*Now that we have our variables set and added as the values of the 
+    properties in the selected classes and elements, we need to write
+    the logic for when the inputs change we can update the CSS variables,
+    which in turn will update the colors on our screen.*/
+
+
+    /*For this, we declare a constant named inputs that it's equal to 
+    a document.querySelectorAll to select all the elements that match the criteria.
+    So in this case, it will select all the elements that have the class .controls
+    and are of input type.*/
     const inputs = document.querySelectorAll('.controls input');
     
+    /*What this gives us is a node list. It is not an array. It does not have all the functionalities
+    of an array but it does have forEach. So for the time being, we do not need to convert it to an
+    array.*/
+
+    /*
+    NodeList. In the DOM (Document Object Model) in browsers, 
+    NodeList is an object consisting of a list of all nodes in a page.
+    */
+
+    /*
+    To handle the update we now create a function called handleUpdate
+    which will not receive any parameters.
+    This function will have a constant named suffix equal to 
+    the custom data set that we specified in our inputs named
+    sizing.
+    The this keyword refers to the object named dataset, so it will
+    grab whatever has the custom data attribute and, as said before, convert them
+    into an object.
+    For this excercise we specifically access the sizing, for our custom data
+    attribute is called data-sizing.
+    */
+
+    /*
+    Since some of them do not have a data-sizing, like the color one, we append and empty space.
+    So to update our values in the actual variables, we select the entire document by declaring document
+    and then accessing the documentElement, access the style and set the property.
+    setProperty receives two arguments: the property to be set and the value.
+    Since we need to set different properties depending each case, we use backticks to use string interpolation,
+    pass this.name to retreive which property is being modified and pass this.value + suffix.
+    The value will be modified by the number that it corresponds. Alone, it would do nothing,
+    but that is why we created the suffix constant to tag it to the end so we add "px". 
+    And now our programm knows we are appending a value that represents pixels, so the change
+    will be implemented.
+    */
     function handleUpdate() {
       const suffix = this.dataset.sizing || '';
       document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
     };
 
+    /*So now we use the forEach method contained in the node list saved to our inputs constant.
+    For each element, we will add an event listener, this will listen for two things:
+    First, for a change and when that happens it will execute our handleUpdate function.
+    On the second event listener we added, it will listen fore a mousemove and again, will execute 
+    the handleUpdate function.
+    The change listener executes the function when you let go of the adjustment bar.
+    The mousemove listener executes the function each time you move the value.
+    So in conjunction, they execute the function regardless of which one happens.*/
     inputs.forEach(input => input.addEventListener('change', handleUpdate));
     inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
+
+
+    /*As a side note. You can scope the variables. This is done by adding an attribute in an element of our document
+    and setting it's value to whatever we want. Since it is done lower down, it will win
+    over the ones declared first.*/
 
   </script>
 
