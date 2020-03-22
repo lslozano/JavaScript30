@@ -23,12 +23,43 @@
       box-sizing: inherit;
     }
 
+    /*
+    This class is for all the panels.
+    Step 1: 
+    First of all we need that our panels are displayed side by side and we do that by adding a display: flex to the class panels.
+    */
     .panels {
       min-height: 100vh;
       overflow: hidden;
       display: flex;
     }
 
+    /*
+    Step 2: 
+    This class applies style to individual panels. 
+    Now that we added display: flex to all the panels, we have an issue to solve. 
+    They are side by side, but they only occupy as much room as the flex child needs, this means it is as big as the words inside them.
+    So at this point we are going to have an empty space on the right side of the screen. 
+    To solve this, we add flex: 1. This means that each of the panels will evenly distribute the extra space among each other. 
+    At this point, the extra space in between them is distributed.
+    Now what we need is that the items are centered in thirds. 
+    */
+
+    /*
+    Step 4: 
+    To achieve our aim that the words are vertically positioned and centered we need to do the following: 
+    We add the properties of justify-content: center, so our items get centered left to right. 
+    Then we add align-items: center. This won't get us much, but this needs to be added in order for the items to align themselves 
+    vertically (from up to down) when we add the corresponding properties. 
+    Next step is to make our individual container a flex container by adding display: flex. This display: flex is a nested flex box.
+    The flex container is "panels" and the flex item is "panel". But, the flex item can also be a flex container, as seen in this 
+    example. 
+    An element in CSS can be a flex container as well as a flex item.
+    At this point, our words are stacked left to right, but we need them in a vertical position. 
+    The only thing we need to do is add flex-direction property and set it as column. And now the words are vertically centered in the middle. 
+    Now we want each of this items to occupy 1/3 of the panel container. We need to head to our Flex Item container that selects all the children , 
+    this means the class .panel > *. 
+    */
     .panel {
       background: #6B0F9C;
       box-shadow: inset 0 0 0 5px rgba(255,255,255,0.1);
@@ -58,7 +89,34 @@
     .panel4 { background-image:url(https://source.unsplash.com/ITjiVXcwVng/1500x1500); }
     .panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
 
+    /*This exercise leans heavily on CSS and a little JS.*/
     /* Flex Items */
+    /*
+    Step 3:
+    To see what is happening, we can add a border with 1px solid and a red color. This way we have a visual representation
+    of what is happening with each children element on the screen. 
+    .panel > * selects ALL the direct children within the panel class. > children selector of a particular element. 
+    * universal selector.
+    Note: Later on we will delete this border. 
+    At this point, our three items have borders around them. 
+    */
+
+    /*
+    Step 5: 
+    We can add a temporary border to see clearly what is happening with each item in the container. 
+    To make the items spread in 1/3 across our panel container we use the property flex: 1 0 auto. 
+    This property sets the flexible length on flexible items. 
+    It's three values are: flex-grow, which is a number specifying how much the item will grow relative to the rest of the flexible items. 
+    flex-shrink, which is a number specifying how much the item will grow relative to the rest of the flexible items. 
+    flex-basis, which is the lenght of the item. Legal values: "auto", "inherit" or a number followed by a "%", "px", "em" or any other
+    length unit.
+    So, the flex property we added tells the items to grow in 1/3 of our panel container, shrink 0 and auto establishes the length. 
+    We add a display: flex on our panel container, effectively adding a nested flexbox, turning the container panel within the container panels, in it's
+    own flex container.
+    This makes the items align to the left of the container, not doing much, but if we add justify-content center, centering our
+    items left to right and align-items center, to align them vertically. 
+    We no have everything centered. 
+    */
     .panel > * {
       margin: 0;
       width: 100%;
@@ -70,6 +128,36 @@
       align-items: center;
     }
 
+    /*
+    Step 6: 
+    To move the first and last letters in the column to the very top and the bottom respectively, we need to create another selector
+    that grabs the first child and last child in each panel.
+    This selectors, in combination with Javascript, will help us make the transition effect that we aim to have. 
+    First, we need to get ahold of the first children and last children in the panel class. 
+    We do this by creating a selector of the panel, that grabs all the elements inside with the universal selector and only targets
+    the first-child and last child. 
+    Now that we did this, inside curly braces we use transform, which is a CSS property that lets you rotate, scale, skew or translate 
+    an element. It modifies the coordinate space of the CSS visual formatting model. 
+    So, we translateY on the first child to -100%, removing it out of the visual space of our screen. 
+    And, we do the same for the last child, transalating Y to 100%.
+    At this point, we do not see this two children on screen since they are below and above the measures of Y axis that are visible
+    on the screen. 
+
+    The idea is that when you remove the translateY, our children elements animate in on the screen. When adding it again, they animate
+    out of the screen. 
+    The way that this is done is by adding a class open-active to each panel and when they have this class, we use the transform property
+    on the first and last child to translate Y to 0. 
+
+    You might be wondering, what does .panel.open-active means? Because this is very different than .panel .open-active.
+    Well, the difference is the following: 
+    .panel .open-active selects all the elements that have this class that are direct descendants of the element that has the class
+    .panel 
+    .panel.open-active will select all elements that have the class panel and open active.
+
+    At this point, if we go to our developer tools Elements section and add a class of .open-active in a div that has the panel class,
+    we will see the effect in motion. 
+  
+    */
     .panel > *:first-child { transform: translateY(-100%); }
     .panel.open-active > *:first-child { transform: translateY(0); }
     .panel > *:last-child {transform: translateY(100%)}
@@ -86,6 +174,19 @@
       font-size: 4em;
     }
 
+    /*
+    Step 7: 
+    The last bit of the puzzle is that when our panels have the class of open, the text needs to be bigger and the panel needs to
+    stretch out.
+    To do this, we create a selector that targets all the elements that have the class of panel and open. 
+    It has the property font-size 40px so our text becomes bigger and we give it the property flex with a value of 5.
+    This value means that it will grow, as the first value in flex correspondends to flex-grow.
+    So, it will take 5 times the extra room as the rest of them, because they, have a regular flex of 1 (at least when they do not
+    have the .open class.) So, at last we have our animation transition. 
+    This happens because, if you go to the panel class, it has the property transition that transitions the font size over 0.7 
+    seconds and also uses the cubic-bezier value. 
+    This is also applied to the flex property. 
+    */
     .panel.open {
       flex: 5;
       font-size: 40px;
@@ -129,24 +230,68 @@
 
   <script>
 
+    /*
+    Step 8: The CSS is done, time to add our JavaScript.
+
+    First, we declare a constant that selects all the elements that have the panel class. This will give us a Node List.
+
+    We create a function called toggleOpen that will select our object itself (meaning the panel wich the user clicks - this
+    will be defined later on) and access the classList and the toggle method to add and remove a class name from the element.
+    This will add and remove the class "open". For when the panel is open, the text changes it's font and has a flex of 5.
+
+    Now to achieve the effect of bringing the first children and last children into the screen, we create a function called
+    toogleActive that will receive an event as a parameter.
+    On this event we will check if it includes a property with a name "flex" 
+    This is done by writing a conditional if statement. On the condition, we will access the property names of the event and check
+    if it includes the property name "flex", if that is true, 
+    add to the panel element the class name of 'open-active'.
+    This will work the other way around, when the class is present, it will remove it.
+    */
+
     const panels = document.querySelectorAll('.panel');
 
     function toggleOpen() {
       this.classList.toggle('open')
     };
 
+    /*
+    It is important to note that in this function we check if it includes the word "flex" in a property, since it is the one that matters and
+    that is added when the class "open" is present. On some browsers this property is read as flex or flex-grow. To cover all the possibilites
+    we just check if it includes the word flex.
+    */
     function toggleActive(e) {
       if(e.propertyName.includes('flex')) {
         this.classList.toggle('open-active')
       }
     };
 
+    /*
+    Step 9: 
+    We have our functionality to toggle the open and open-active classes, but how do we achieve this? 
+    Well, by accessing our panels constant and since the Node list has the method forEach, we can iterate over it's elements and
+    do the following:
+
+    For starters, on each element in the panel we will add an event listener, that will listen for a click.
+    Whenever a click happens, it will execute our toggleOpen function.
+    If another click occurs, it will again execute our function toggleOpen and remove the class "open".
+
+    Last but not least, we do another forEach and add an event listener for the "transitionend", which can be find in the event that is
+    being activated by the toogleActive function.
+    If you want to check it out, you can do a console.log(e) to see what is happening.
+    So when the trasnitionend happens, it will execute our function toggleActive.
+    
+    We do not add parenthesis to the functions so they do not execute on load, we just refer to them so they execute when the
+    event that each listener is listening to, happens.
+
+    Note: You do not have to specify a width for the elements, because if the have a flex of 5, each will take less space of the
+    extra room. 
+
+    */
+
     panels.forEach(panel => panel.addEventListener('click', toggleOpen));
     panels.forEach(panel => panel.addEventListener('transitionend', toggleActive));
 
   </script>
-
-
 
 </body>
 </html>
