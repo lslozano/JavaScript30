@@ -26,15 +26,106 @@
 
     // Some and Every Checks
     // Array.prototype.some() // is at least one person 19 or older?
+
+    //Refactor 2 by Wes Bos - implicit return:
+    /*
+    some method finds in the array if an element meets the given criteria.
+    */
+    const isAdult = people.some(person => (new Date()).getFullYear() - person.year >= 19)
+    console.log({isAdult})
+    
+    /*
+    Refactor  number 1 by Wes Bos.
+    const isAdult = people.some(person => {
+      const currentYear = (new Date()).getFullYear()
+      return currentYear - person.year >= 19
+    })
+    */
+  
+    /*
+    First approach by Wes Bos.
+
+    const isAdult = people.some(function(person) {
+      const currentYear = (new Date()).getFullYear()
+      if (currentYear - person.year >= 19) {
+        return true
+      }
+    })
+
+    First approach before watching video:
+
+    const date = new Date();
+    const year = date.getFullYear()
+    const nineteen = 19
+
+    function checkAge(person) {
+      return year - person.year >= 19
+    }
+
+    console.log(people.some(checkAge))
+
+    Refactor by me:
+    const currentYear = (new Date()).getFullYear()
+    const isAdult = people.some(person => currentYear - person.year >= 19);
+
+    Note: It is recommended to have as few global variables as possible.
+
+    */
+    
     // Array.prototype.every() // is everyone 19 or older?
+    //every array method checks if all the elements meet the given criteria.
+    const isEveryoneAdult = people.every(person => (new Date()).getFullYear() - person.year >= 19)
+    console.log({isEveryoneAdult})
 
     // Array.prototype.find()
     // Find is like filter, but instead returns just the one you are looking for
     // find the comment with the ID of 823423
+    //First approach done by me.
+    const comment = comments.find(comment => comment.id === 823423);
+    console.log(comment)
+
+    /*
+    Approach by Wes Bos on the first example:
+    const comment = comments.find(function(comment) {
+      if (comment.id === 823423) {
+        return true
+      }
+    })
+    */
 
     // Array.prototype.findIndex()
-    // Find the comment with this ID
+    // Find the comment with this ID 
     // delete the comment with the ID of 823423
+
+    /*
+    Wes Bos mentions that this option is very popular in the Redux world.
+    You create a new array with comments, using spread operator and slice. This way you do not
+    modify the comments array.
+    Spread operator helps separate each element and slice method returns a shallow copy of the
+    given array starting at the given position and not including the end position if given.
+    If not end position is given as a second argument, it will include all the elements
+    present in the array.
+    */
+    const index = comments.findIndex(comment => comment.id === 823423);
+
+    const newComments = [
+      ...comments.slice(0, index),
+      ...comments.slice(index + 1)
+    ];
+    console.log(newComments)
+
+    /*
+    This are the other options tried:
+    Approach done by me without seeing the video.
+    const idIndex = comments.findIndex(comment => comment.id === 823423)
+    const deleteId = comments.splice(idIndex, 1);
+    console.log(comments)
+
+    First approach by Wes Bos
+    const index = comments.findIndex(comment => comment.id === 823423);
+    comments.splice(index, 1)
+    console.log(comments)
+    */
 
   </script>
 </body>
