@@ -15,15 +15,53 @@
     </ul>
   </form>
 <script>
+
+//This is the json file which includes all the data that we need. It is a huge array.
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+//We create an empty array where we will store the data coming from the endpoint.
 const cities = [];
 
+//The browser now has a new function built in to get data called: Fetch.
+//The description is function fetch (input: requestinfo )
+//So here, we pass our endpoint.
+/*
+Fetch itself returns a promise, so, in other words is that something will eventually come back from this promise.
+To work with it we need a .then.
+The then will returns to us a "blob" of data. It is called like this because it doesn't know what kind of data
+it is.
+We explicitly know it is a json.
+So we need to convert the blob into a json. If you look at this blob 
+in the console, you can see it has a method called json. So we access this method and execute it in
+order to convert the blob to a json.
+This in fact returns another promise, so again we use .then and pass the data we will receive.
+The data will be the massive array that conforms the endpoint.
+
+My first approach to get all this data inside cities, was to make a .forEach in the data and for each city,
+push that element into my cities array. And it works, but there is a cleaner way.
+
+Instead of doing a for each, we just apply the push method to cities and pass the data with a spread operator.
+So we now have individual arguments to be pushed into our cities array.
+*/
 fetch(endpoint)
   .then(blob => blob.json())
   .then(data => cities.push(...data))
   //.then(data => data.forEach(city => {cities.push(city)}));
 
+/*
+Now we need to create a function to find the match of the word that is being written in our input file.
+This function will have two parameters: wordToMatch and ciites.
+We need to return the cities by applying a filter to them.
+This filter will have a place.
+Create a constant that consist in a new Regular Expression. 
+This regular expression will receive a string as it's first argument. This string will be searched for and it is
+the pattern.
+The 'gi' is the modifier. 
+G stands for global and i serves to modify the search to be case-insensitive.
+Now that we have our regular expression contained in regex, within the return  we execute another
+return, this will return the place, accessing the city and the method match, searching to match regex
+OR the state.
+*/
 function findMatches(wordToMatch, cities) {
   return cities.filter(place => {
     //Here we need to figure out if the city or state matches what was searched.
@@ -32,10 +70,48 @@ function findMatches(wordToMatch, cities) {
   })
 }
 
+//This function helps to add commas to the numbers in population. It is a regular expression.
+//Black magic.
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+/*
+Now we make our function to display the matches. Before doing this, it is important to get our
+data.
+Every time we need to get our data, then occupy ourselves in displaying it.
+
+Create a constant that contains the function findMatches and as the wordToMatch receives this.value
+which is the input that is being received by the user in the input field.
+It will search within the cities array as a second argument.
+
+For the fun part:
+
+Create an html constant that is equal to the matchArray previously declared and execute the map
+method on it.
+This map method will have an element called place.
+It will return the following:
+
+A constant named regex equal to a new Regular Expresion, that will have this.value (the value of
+the input) as it's first argument (string that will be searched for) and 'gi' as it's second.
+
+A constant named cityName that will be equal to the place, accessing the city and the replace method.
+The replace method will replace our regex with the declared span.
+
+A constant named stateName that will do the exact same thing but for the information in state.
+
+Now return a list element containing a class name and the cityName and stateName constants.
+Also a span with class population that has the numberWithCommas to return the place population
+number with the commas placed in the exact place.
+To finish, the map returns an array but we want a string, so
+we access the method join('') to create the desired string.
+
+
+Last but not least, in this function we grab the constant suggestions, access the innerHTMl property
+and make it equal to our html constant. This way we can create the list elements with the corresponding
+values and add them to our html on the fly.
+
+*/
 function displayMatches() {
   //GET YOUR DATA FIRST.
   const matchArray = findMatches(this.value, cities)
@@ -52,6 +128,18 @@ function displayMatches() {
   }).join('')
   suggestions.innerHTML = html
 }
+
+/*
+The functions declared above will not work if we do not get ahold of the classes search and suggestions and
+add to them event listeners for when to execute the functions.
+So in order to do that, first we declared the constants and via query selector we grab ahold of those
+classes.
+
+Now, we add an event listener that will be listening for change and keyup and for each will execute 
+displayMatches function.
+Again, we do not add parenthesis at the end of displayMatches since we want just to make a reference to
+the function and execute it once the event happens. Not at the moment the screen loads.
+*/
 
 const searchInput = document.querySelector('.search');
 const suggestions = document.querySelector('.suggestions');
