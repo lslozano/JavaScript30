@@ -7,6 +7,145 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+
+  //Get hold of the canvas element.
+  /*
+  You don't really draw in the cavas, but in the context.
+  To get hold of the context we declare a constant named
+  ctx that will have as value our canvas constant and access
+  it's context in 2D.
+  */
+  const canvas = document.querySelector('#draw');
+  const ctx = canvas.getContext('2d');
+
+  //Resize our canvas, telling it that it will have
+  //the size of the inner width and height of the window.
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  //When you draw on something, it needs to be a color.
+  ctx.strokeStyle = '#BADA55';
+  //End of the line should be square or round.
+  //Creates a rounder corner when two lines meet.
+  ctx.lineJoin = 'round';
+  //Draws a line with rounded end caps.
+  ctx.lineCap = 'round';
+  //If this lines are not present, the lines do not look rounded. 
+
+  //Specifies the line width of the line that is being drawn.
+  ctx.lineWidth = 50;
+
+  //On google we can check how many values global composite operator has.
+  //It gives another effect to the line.
+  //Won't use it at the moment.
+  //ctx.globalCompositeOperator = 'multiply'
+
+  //This variable will serve to detect when the user presses the
+  //mouse to draw and when it let goes of the button.
+  //This flag will tell the program when to draw - having flags is common in JS to
+  //test if something is true or false.
+  let isDrawing = false;
+  //What needs to happen for me to draw a line is that I need a starting X and Y and 
+  //an ending X and Y.
+  //This variables will help us keep track of those values.
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;
+
+  
+  let direction = true;
+
+
+  //Function that will receive an event as a parameter and will help us execute the
+  //drawing action.
+  function draw(e) {
+    if (!isDrawing) return; //Stop the function from running when the mouse is not down.
+    //Everything below line 47 will only run if mouse is down.
+    //First we need to start our path. Rember: CTX is where we do all of our drawing for canvas.
+    console.log(e)
+    /*
+    There is a website named https://mothereffinghsl.com/ where you can see all the
+    spectrum of the rainbow. Since we want for our stroke to change colors, we
+    set the stroke style of our context to a string that tells that our color will
+    be determined via HSL, which is a color system and HUE determines the specific 
+    value for the color from the rainbow spectrum.
+    
+    Second value is saturation, third value is lightness.
+    */
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+
+    ctx.beginPath();
+    /*
+    We need to start from x and y.
+    */
+    ctx.moveTo(lastX, lastY);
+    /*
+    offsetX and offsetY are to where we are going to go.
+    offSetX and offSetY are coming from the event that happened. If we logged the
+    event to the console, we can see them within the event.
+    */
+    ctx.lineTo(e.offsetX, e.offsetY);
+    /*
+    The lines of code before, start our line to draw, but we won't see anything
+    on screen until we call the stroke method of ctx.
+    */
+    ctx.stroke();
+
+    //Set the values of lastX and lastY to where the mouse went after the function
+    //executes. ES6 Trick: Declare both in 1 line.
+    //This is called: Destructuring an array.
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+
+    //At the end we need to increment or hue variable to change the color.
+    hue++
+
+    //Since the color value in the rainbow goes up to 360, when it hits this value
+    //set hue again to 0. 
+    //Al this will create the effect of a line that changes colors while moving
+    //it around our canvas.
+    if (hue >= 360) {
+      hue = 0;
+    }
+
+    //Checks for line width to change direction accordingly.
+    if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+      direction = !direction;
+    }
+
+    if (direction) {
+      //If direction is true, increment the line width from 0 all the way to the 100.
+      ctx.lineWidth++
+    } else {
+      //If direction is false, increment the line width from 100 all the way to 0.
+      ctx.lineWidth--
+    }
+
+  }
+
+  //Event listener on canvas for mouse move that will execute draw.
+
+  /*
+  At this point, with ur lastX and lastY assigned to offsetX and offsetY we
+  can draw on the screen. Nonetheless, the values are not correct, because x always
+  starts at 0 or at the offsetX position, and we want it to start where the mouse is
+  pressed down.
+  To solve this, we move our event listener for mouse down up (for readability) and
+  add a block of code instead of the one line arrow function that we had.
+
+  canvas.addEventListener('mousedown', () => isDrawing = true);
+  */
+
+  canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    //This update sets the values of lastX and lastY exactly where the mouse is pressed
+    //down at the start. This is done before executing the draw function.
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+  });
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', () => isDrawing = false);
+  canvas.addEventListener('mouseout', () => isDrawing = false);
+
+
 </script>
 
 <style>
