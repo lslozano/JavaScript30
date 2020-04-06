@@ -96,6 +96,62 @@
   </div>
 
 <script>
+
+  //Use of advanced selector. Get hold of all elements that have the class 
+  //"inbox". Within that class, with the advanced selector, 
+  //get hold of all elements that have type checkbox.
+  const checkboxes = document.querySelectorAll('.inbox input[type = "checkbox"]')
+  
+  //Variable that stores the last input checked.
+  let lastChecked; 
+
+  //Handles the check of the boxex.
+  function handleCheck(e) {
+
+    //Variable that will help us point to the first input checked.
+    let inBetween = false
+
+    //Conditional to check if shiftKey is pressed down and
+    //check that the input is being check.
+    //"this" refers to the input.
+    if (e.shiftKey && this.checked) {
+      //When the event is a shiftKey and a input has being checked
+      //Loops over every single checkbox.
+      //It is a node list. So we can use the forEach method.
+      checkboxes.forEach(checkbox => {
+        //console.log(checkbox)        
+        //This conditional will determine what is the first and last checkbox
+        //checked.
+        if (checkbox === this || checkbox === lastChecked) {
+          //When first condition is triggered, inBetween will be set to true.
+          ///When second condition is triggered, inBetween wil be set to false.
+          //Flag variable.
+          inBetween = !inBetween
+          //console.log('Starting to check inbetween')
+        }
+
+        //Turns checked to true on checkbox after evaluation inBetween to true.
+        if (inBetween) {
+          checkbox.checked = true
+        }
+
+      })
+    }
+
+    //Reference to the input that was last checked and store it in
+    //our variable.
+    lastChecked = this
+  } 
+
+  //Loop the node list. Listen for click event and execute handleCheck.
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('click', handleCheck)
+  });
+
+
 </script>
+
 </body>
 </html>
+
+
