@@ -43,20 +43,116 @@
   </div>
 
   <script>
+
+    // Exercise: Make images appear into screen from left to right or right o left
+    // when you are scrolling.
+
+    
+    // Debounce function.
+    // This function what it essentially does is run the 
+    // function that is passed as an argument just once every
+    // 20 miliseconds.
     function debounce(func, wait = 20, immediate = true) {
       var timeout;
       return function() {
+
+        // context refers to the context of this function.
+        // arg = arguments refers to all the arguments that will be received.
         var context = this, args = arguments;
+        
+        // Function that will be executed at the end of the debounce timer.
+        // It is a callback function.
+        // It will be called after the setTimeout ends.
         var later = function() {
+        
+          // Null timeout to indicate the debounce has ended.
           timeout = null;
+
+          // Call function now if you did not on the leading end.
           if (!immediate) func.apply(context, args);
+        
         };
+        
+        // Executes function immediatly and prevents any subsequent calls 
+        // unless debounce timer has expired.
+        // Determines if the function is going to be called on the leading or
+        // trail end.
         var callNow = immediate && !timeout;
+        
+        // Clear the timeout which had prevented the callback from being 
+        //executed and thus restarts the debounce.
+        // This will reset the waiting every function execution.
+        // This is the step that prevents the function from
+        // being executed because it will never reach the 
+        // inside of the previous setTimeout  
         clearTimeout(timeout);
+        
+        // Restart the debounce waiting period.
+        // Re declare timeout.
+        // Here we call the later function after the wait ends.
+        // If full time elapses then we execute again later.
         timeout = setTimeout(later, wait);
+        
+        // Call immediately if you're dong a leading
+        // end execution
+        // Then it checks to see if we want to call the debounce function again.
+        // If so, it applies the context and arguments to the function that we
+        // are calling.
         if (callNow) func.apply(context, args);
+
       };
     }
+
+    // Select all images with the class slide-in that they have.
+    const sliderImages = document.querySelectorAll('.slide-in');
+
+    function checkSlide(e) {
+
+      //Loops through the node of images.
+      sliderImages.forEach(sliderImage => {
+
+        // window.scrollY = Returns the number of the pixels by which the content of the document are scrolled upward.
+        // In other words it is the number of pixels that have been scrolled upward or
+        // how far the page has been scrolled down.
+        // window.innerHeight = Returns the interior height of the window in pixels.
+        // So window.scrollY + window.innerHeight = How far down we have scrolled.
+        // sliderImage.height = Total height of the image in pixels.
+        // This constant is equivalent to the value to where exactly the image must slide in.
+        // Since it targets specifically to where the image is situated in the window.
+        // First we get where we are at after scrolling and substract to that the height of the image between 2.
+        const slideInAt = (window.scrollY + window.innerHeight) - sliderImage.height / 2
+
+        // We need to know where is the bottom of the image. Since if we have passed it, it should slide itself back out.
+        // offsetTop tells us how far the top of the image is from the top of the actual window. 
+        // We add it the image height to exactly know where the bottom of the image is positioned at the screen.
+        const imageBottom = sliderImage.offsetTop + sliderImage.height
+
+        // Checks if the position of where the image must be shown is greater than the top position of the image to 
+        // determine if image is half shown.
+        const isHalfShow = slideInAt > sliderImage.offsetTop
+
+        // Checks if user hasn't scrolled past the image.
+        // So if window.scrollY is less than imageBottom, it means the image is still visible in screen.
+        const isNotScrolledPast = window.scrollY < imageBottom
+
+        // If both conditions evaluate to true, add the respective class to the image element so it appears on screen.
+        // If not, remove the class and make the image not visible.
+        if (isHalfShow && isNotScrolledPast) {
+          sliderImage.classList.add('active')
+        } else {
+          sliderImage.classList.remove('active')
+        }
+  
+      })
+    
+    }
+
+    // Window event listener for scroll.
+    // The problem here is we do not want to execute the function every time 
+    // it is scrolled, since that would have performance issues.
+    // What we need to do is "debouncing". Refer to function debounce.
+    // Wrap our checkSlide inside our debounce function.
+    window.addEventListener('scroll', debounce(checkSlide));
 
   </script>
 
