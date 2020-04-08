@@ -7,6 +7,71 @@
 </head>
 <body>
 <script>
+
+//Exercise:
+//Catch if user has entered the secret code for an specific action to occur.
+
+//Create a constant that will save the keys being inputted by the user.
+const pressed = []
+//Secret code to match.
+const secretCode = "luis"
+
+//Event listener on window that will execute a function that receives an
+//event.
+window.addEventListener('keyup', (e) => {
+
+  //Push to the array the key that is being pressed.
+  pressed.push(e.key)
+  //Splice the elements from the array, positioning from end to start with
+  //a negative number as a first value.
+  //Removes as many items as the result of the second operation.
+  //This allows to keep our array in the length of the secret word and
+  //be able to see if the array includes it.
+  pressed.splice(-secretCode.length - 1, pressed.length - secretCode.length)
+  
+  //Conditional to check if our array, after joining it's elements, includes
+  //the secret code.
+  if (pressed.join('').includes(secretCode)) {
+    console.log('DING!')
+    //If true, run cornify_add() wich adds unicorns to the screen.
+    cornify_add()
+  }
+
+  /*
+  First approach by me:
+  if (pressed.join('') == secretCode) {
+    console.log('DING DING!')
+  }
+  It is easier to use an includes method as a conditional, as shown above in
+  line 19.
+  */
+});
+
+
+/*
+
+First approach:
+
+  let pressedArray = []
+  let secretCode;
+  const secretWord = 'lslozano'
+
+  window.addEventListener('keyup', (e) => {
+    pressedArray.push(e.key)
+    secretCode = pressedArray.join('')
+    console.log(pressedArray)
+    if (secretCode == secretWord) {
+      console.log('You may pass')
+    } else if (pressedArray.length >= 8) {
+      pressedArray = []
+    }
+  });
+
+  This only works if the correct word is typed in a sequence of 8 characters.
+  If you type for example: "holalslo" the array will be emptied and even if you
+  typed "zano" next, it won't work.
+*/
+
 </script>
 </body>
 </html>
