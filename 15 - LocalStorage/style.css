@@ -1,6 +1,6 @@
 html {
   box-sizing: border-box;
-  background: url('http://wes.io/hx9M/oh-la-la.jpg') center no-repeat;
+  background: url('https://cdn-3.expansion.mx/dims4/default/7ecd08a/2147483647/strip/true/crop/1000x667+0+0/resize/1600x1068!/quality/90/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F47%2Fd4%2Fee8895304c3a8d90d1520837fa93%2Fistock-914127078-copy.jpg') center no-repeat;
   background-size: cover;
   min-height: 100vh;
   display: flex;
@@ -59,11 +59,13 @@ h2 {
   display: none;
 }
 
+/* Blank square as input label. */
 .plates input + label:before {
   content: '⬜️';
   margin-right: 10px;
 }
 
+/* When input is checked, add content. */
 .plates input:checked + label:before {
   content: '🌮';
 }
