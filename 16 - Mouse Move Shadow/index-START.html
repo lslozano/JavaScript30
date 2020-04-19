@@ -35,6 +35,55 @@
   </style>
 
 <script>
+  const hero = document.querySelector('.hero');
+  const text = document.querySelector('h1');
+  // Set up the initial value for how far our shadow needs to go.
+  const walk = 100;
+
+  function shadow(e) {
+    /*
+    Declaring individual variables:
+    const width = hero.offsetWidth;
+    const height = hero.offsetHeight;
+    */
+    // ES6 Destructure - width and height of our hero div.
+    const { offsetWidth: width, offsetHeight: height } = hero;
+    // IMPORTANT: Get the position of where the person cursor is.
+    let { offsetX: x, offsetY: y } = e;
+
+    // If you have nested elements, you will need to access them and
+    // do some math.
+    // this - is always .hero. e.target - what triggered the event. It
+    // will sometimes change.
+    // If this and e.target are not the same.
+    if (this !== e.target) {
+      // If user is hovering on the H1
+      // Add to x the pixels from the left
+      // Add to y the pixels from the top.
+      x = x + e.target.offsetLeft;
+      y = y + e.target.offsetTop
+    }
+
+    // To dertime how the text shadow will be positioned on the screen
+    // we use this operation.
+    // We need to go as far as 50 and as low as -50 to create
+    // a proper shadow effect.
+    const xWalk = Math.round((x / width * walk) - (walk / 2));
+    const yWalk = Math.round((y / height * walk) - (walk / 2));
+
+    // The shadow effect will be created at the corresponding
+    // xWalk and yWal positions.
+    // Changing a little their value so they are created
+    // in different directions. That's why we use the * -1.
+    text.style.textShadow = `
+      ${xWalk}px ${yWalk}px 0 rgba(255, 0, 255, 0.7),
+      ${xWalk * -1}px ${yWalk}px 0 rgba(0, 255, 255, 0.7),
+      ${yWalk}px ${xWalk * -1}px 0 rgba(0, 255, 0, 0.7),
+      ${yWalk * -1}px ${xWalk}px 0 rgba(0, 0, 255, 0.7)
+    `;
+  }
+
+  hero.addEventListener('mousemove', shadow);
 </script>
 </body>
 </html>
