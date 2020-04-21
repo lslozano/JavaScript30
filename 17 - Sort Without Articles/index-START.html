@@ -46,10 +46,58 @@
   <ul id="bands"></ul>
 
 <script>
-const bands = ['The Plot in You', 'The Devil Wears Prada', 'Pierce the Veil', 'Norma Jean', 'The Bled', 'Say Anything', 'The Midway State', 'We Came as Romans', 'Counterparts', 'Oh, Sleeper', 'A Skylit Drive', 'Anywhere But Here', 'An Old Dog'];
 
+  const bands = [
+    'The Plot in You',
+    'The Devil Wears Prada', 
+    'Pierce the Veil', 
+    'Norma Jean', 
+    'The Bled', 
+    'Say Anything', 
+    'The Midway State', 
+    'We Came as Romans', 
+    'Counterparts', 
+    'Oh, Sleeper', 
+    'A Skylit Drive', 
+    'Anywhere But Here', 
+    'An Old Dog'
+  ];
 
+  // Function that uses a regular expression to replace all three words.
+  // So everytime it executes and it matches the string cases
+  // they will be replaced.
+  // The first sign means: "When it starts with"
+  // The spaces avoid the regular expression replacing words like Then An.
+  // It replaces the strings with nothing and trim removes whitespace from
+  // both ends of the string.
+  // i = case insensitive.
+  function strip(bandName) {
+    return bandName.replace(/^(a |the |an )/i, '').trim()
+  }
+
+  // Same function as in lines above but in just one line.
+  // Use of implicit return and ternary operator.
+  const sortedBands = bands.sort((a, b) => strip(a) > strip(b) ? 1 : -1);
+
+  /*
+  // Use the strip function within the conditional statement.
+  const sortedBands = bands.sort((a, b) => {
+    // The data is not modified. It is only applied for sorting purposes.
+    // It is not necessary to use the function after the if statement.
+    if (strip(a) > strip(b)) {
+      return 1
+    } else {
+      return -1
+    }
+  });
+  */
+
+  // Hold the ul element.
+  const ul = document.querySelector('#bands')
+  // Set it's innerHTML value to each band on the array.
+  // Use string interpolation and join the string.
+  // If join is not applied it will give use a comma between each list element.
+  ul.innerHTML = sortedBands.map(band => `<li>${band}</li>`).join('');
 </script>
-
 </body>
 </html>
