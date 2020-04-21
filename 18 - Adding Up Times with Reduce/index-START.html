@@ -182,6 +182,63 @@
     </li>
   </ul>
 <script>
+
+  // This is a NodeList. So we need to convert it into a new
+  // array with Array from.
+  // We can also use the spread operator.
+  const timeNodes = Array.from(document.querySelectorAll('[data-time]'));
+
+  // Return a new array of seconds by using map on the timeNodes.
+  // It will return the dataset.time. 
+  const seconds = timeNodes
+    .map(node => node.dataset.time)
+    .map(timeCode => {
+      // Use of ES6 destructure to get a array constants with
+      // all minutes and all seconds from timeCode.
+      // We use split at : to return the two values.
+      // Run map method on each array and pass the 
+      // parseFloat method so it turns our elements into 
+      // numbers.
+      const [ mins, secs ] = timeCode.split(':').map(parseFloat)
+      return (mins * 60) + secs
+    })
+    .reduce((total, vidSeconds) => total + vidSeconds);
+  
+  /*
+  Same as lines above but done in different variables:
+  
+  const time = timeNodes.map(node => node.dataset.time)
+  const videoTime = time.map(timeCode => {
+    const [ mins, secs ] = timeCode.split(':').map(parseFloat)
+    return (mins * 60) + secs
+  })
+  const seconds = videoTime.reduce((total, vidSeconds) => total + vidSeconds); 
+  */
+
+    // Note: map takes in an array an exports it.
+    // reduce takes in an array and return anything you want.
+    // The reduce method turns our array of seconds into a single
+    // value.
+
+  // Get the total time of our video list in hours, minutes and
+  // seconds:
+  let secondsLeft = seconds
+  // 3600 is total of seconds in an hour.
+  const hours = Math.floor((secondsLeft / 3600));
+  // After seeing how many times secondsLeft can be divided by
+  // 3600, return the reminder, and that are the secondsLeft.
+  secondsLeft = secondsLeft % 3600;
+
+  // Divide by 60 since there are 60 seconds in a minute.
+  const mins = Math.floor((secondsLeft / 60));
+  // Now same as before, just now check module 60, to see how many
+  // seconds are left after the minutes getting them from
+  // the whole time.
+  secondsLeft = secondsLeft % 60;
+
+  const totalTime = `${hours}:${mins}:${secondsLeft}`;
+  console.log(totalTime);
+
 </script>
 </body>
 </html>
