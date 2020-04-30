@@ -26,7 +26,66 @@
     </div>
 
   <script>
-    // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
+    // In this exercise we will create a highlight effect on the anchors.
+    // This will add a class of highlight to the element, it will figure out the width, the height
+    // and where on the page that item is. It will transition itself from place to
+    // place to place with the transformn: translate property.
+    // All this values will be moved over.
+
+    // First we need to get ahold of the elements that trigger the effect.
+    const triggers = document.querySelectorAll('a');
+
+    // Create the highlight span, add a class to it and append it to body.
+    const highlight = document.createElement('span');
+    highlight.classList.add('highlight')
+    document.body.append(highlight);
+
+    // Create a function that is called whenever a mouseenter event
+    // is fired on the anchors.
+    function highlightLink() {
+      // To figure out how big the element and where it is located in the page
+      // we need to use a getBoundingClientRect.
+      const linkCoords = this.getBoundingClientRect() // returns the size of an element and its position relative to the viewport.
+      const coords = {
+        width: linkCoords.width,
+        height: linkCoords.height,
+        // Add the value of window.scrollY so it positions correctly in the y axis.
+        // If this is not done, the highlight does not take into account the scroll
+        // and goes of the screen.
+        top: linkCoords.top + window.scrollY,
+        // Same as with y with x in case it has an horizontal scroll.
+        left: linkCoords.left + window.scrollX
+      }
+
+      highlight.style.width = `${coords.width}px`
+      highlight.style.height = `${coords.height}px`
+      // Rather than doing it with CSS left, right, top bottom
+      // we are going to use transform property, which applies 2D or 3D 
+      // transformation to an element.
+      // It transforms it accordingly to the values passed.
+      highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`
+      // Translate moves an element from its current position to the paramters given
+      // for the X-axis and Y-axis.
+
+      /*
+      I wrote it like this at first:
+
+      highlight.style.width = linkCoords.width + 'px'
+      highlight.style.height = linkCoords.height + 'px'
+      highlight.style.left = linkCoords.left + 'px'
+      highlight.style.right = linkCoords.right + 'px'
+      highlight.style.top = linkCoords.top + 'px'
+      highlight.style.bottom = linkCoords.bottom + 'px'
+      */
+
+    }
+
+    // Loop through the triggers to add an event listener to each
+    // anchor.
+    triggers.forEach(a => {
+      a.addEventListener('mouseenter', highlightLink)
+    });
+
   </script>
 </body>
 </html>

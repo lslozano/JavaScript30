@@ -32,6 +32,8 @@ a {
   border-radius: 20px;
 }
 
+/*Highlight class already has the styles needed for the
+effect. We just need to tell it where in the view is our link.*/
 .highlight {
   transition: all 0.2s;
   border-bottom: 2px solid white;
