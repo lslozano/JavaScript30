@@ -10,8 +10,84 @@
   </div>
 
 <script>
+
+  // This needs to be run in a server for it to work.
+
+  // Method that lives in the window. In Firefox is the first option.
+  // On Chrome it is the second one.
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+  // First we need to make an instance of speechRecognition.
+  const recognition = new SpeechRecognition();
+
+  // As you are speaking populates the node element designed to capture
+  // what it is said.
+  // If this is not done, you need to stop speaking before it does anything.
+  recognition.interimResults = true
+
+  // Create a paragraph that will contain what it is said via
+  // speech recognition.
+  let p = document.createElement('p');
+
+  // Grab the class words to append the child p.
+  const words = document.querySelector(".words")
+  words.appendChild(p);
+
+  // Speech recognition works as listening to clicks.
+  // We take recognition and add an event listener to it.
+  // Here we will be listening for a result, and when the result comes back
+  // we are going to get an event.
+  // Having only this event listener will make the voice
+  // recognition trigger only once.
+  // Once the result is finished, it unbinds itself.
+  recognition.addEventListener('result', e => {
+    // The event returns not an array but a nested stuff of data.
+    // We need to convert it into a plain string that the dom can render.
+    // First, create an array from e.results and map over it.
+    // This returns an array with nested elements.
+    // Map again over it and just return the transcript.
+    const transcript = Array.from(e.results)
+      .map(result => result[0])
+      .map(result => result.transcript) // After the transcript comes back, join the string.
+      .join('')
+
+    // Add the transcript as text content of the paragraph.
+    p.textContent = transcript
+
+    // Each time we talk, the paragraph will be overwritten, so
+    // we need to create a new paragraph each time we stop talking.
+    // So we overwrite the already declared paragraph and
+    // add it as a new one to the div that has the class of 
+    // words.
+    if (e.results[0].isFinal) {
+      p = document.createElement('p')
+      words.appendChild(p)
+    }
+
+    // Note: You can also check if the transcript contains
+    // specific words and on them do certain actions.
+    // For example, if the user says: App get the weather.
+    // You could make a call to an API and get the weather for the users
+    // city.
+    // Here we simulate that:
+    if (transcript.includes('weather') && e.results[0].isFinal) {
+      p = document.createElement('p')
+      p.textContent = 'Getting the weather...'
+      words.appendChild(p)
+      setTimeout(() => {
+        p = document.createElement('p')
+        p.textContent = 'The temperature in Tampico is 27 degrees Celsius. Mostly Cloudy.'
+        words.appendChild(p)
+      }, 3000);
+    }
+  });
+
+  // We need to add an event listener for the 'end' event.
+  // When it happens, run again the function to start the recognition.
+  recognition.addEventListener('end', recognition.start)
+
+  // We need to start the recognition instance.
+  recognition.start();
 
 </script>
 
