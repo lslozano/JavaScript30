@@ -59,6 +59,46 @@
     /*Compass: https://thenounproject.com/search/?q=compass&i=592352*/
   </style>
   <script>
+    // In this example we need to run npm install, then npm start.
+    // This will start a server for which we will have to visit the provided external URL.
+    // To simulate correctly what needs to be done, if you have a Mac, open Xcode and
+    // open developer tools. Run the simulator and there visit the given URL.
+    // There, run the simulator and in features, location, add a feature location.
+
+    // First we need to select the arrow and the speed class.
+    const arrow = document.querySelector('.arrow');
+    const speed = document.querySelector('.speed-value');
+
+    // Now that we have this, we need to listen for the users position.
+    // To do this, in the navigator we access the geolocation method.
+    // Here we have two options:
+    // watchPosition - We want this because it constantly observes the user position.
+    // Giving us data as frequently as we need it.
+    // getCurrentPosition - This only gives us the position of the user at any one given time.
+    // As we can see below, this will return data that we can check/manipulate.
+
+    // When the user allows the app to have access to location, we call
+    // the success callback; which executes the function as intended.
+    // If not, we need to aler the user.
+
+    // First get the speed of the user.
+    // second we need to rotate our compass depending on where user is.
+    // Apply style transform and pass data.coords.heading as value
+    // which is the number of degrees relative to north.
+    // It is 360 degrees based.
+
+    // Finally we pass the error function if location was not
+    // allowed.
+    // Display an alert to the user.
+    navigator.geolocation.watchPosition((data) => {
+      speed.textContent = data.coords.speed
+      arrow.style.transform = `rotate(${data.coords.heading}deg)`
+    }, (err) => {
+      alert('You need to allow the app to have access to your location.')
+
+    });
+  
+    // We can use google map with this functionality or other geo location services.
   </script>
 </body>
 </html>
