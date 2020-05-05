@@ -29,12 +29,123 @@
     </div>
 
 <script>
-  const msg = new SpeechSynthesisUtterance();
+  // In this exercise we transform text to voice.
+  // SpeechSynthesisUtterance - Interface of the Web Speech API represents a speech request.
+  // It contains the content the speech service should read and information
+  // about how to read it.
+  // Create a new instance of it.
+  const msg = new SpeechSynthesisUtterance(); 
+
+  // Here we will add the voices.
   let voices = [];
+
+  // Select the dropdown menu of voices.
   const voicesDropdown = document.querySelector('[name="voice"]');
+
+  // Select with advanced selectors our inputs of type range and the text
+  // area.
   const options = document.querySelectorAll('[type="range"], [name="text"]');
+
+  // Constants that represent our buttons.
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
+
+  // Grab the value inside the text area as a default one.
+  msg.text = document.querySelector('[name="text"]').value
+
+  // This function will populate our array of voices with
+  // the method getVoices. This referes to our object of SpeechSynthesis.
+  // It has a method called getVoices, which returns an object
+  // containing all the voices objects that speechSynthesis contains.
+  function populateVoices() {
+    voices = this.getVoices()
+
+    // Set the innerHTML of voicesDropdown to each an every
+    // option we have of voices.
+    // To do this, we map over our voices array and
+    // return, for each voice, an option with value of 
+    // voice.name, text as voice.name and its respective
+    // language.
+    voicesDropdown.innerHTML = voices
+    // Filter the voices so our options are only the ones in
+    // english language.
+      .filter(voice => voice.lang.includes('en'))
+      .map(voice => `
+        <option value="${voice.name}">
+          ${voice.name} (${voice.lang})
+        </option>`)
+      .join('')
+  }
+
+  // First we get the utterance, which is the message/text.
+  // Run our speechSynthesis.speak() method and pass the constant
+  // that holds the message/text.
+
+  // Function that will run each time a change happens in the voices dropdown menu.
+  function setVoice() {
+    // Set the voice of our Utterance instance to the voice that has been selecetd
+    // in the dropdown menu.
+    // To do this, we call the find method on voices array. It will
+    // loop over it  and find the one whos voice.name attribute 
+    // is the same as the option that was currently selected.
+    msg.voice = voices.find(voice => voice.name === this.value);
+
+    // Call our function toggle at the end of setVoice to stop
+    // the execution of speechSynthesis.
+    toggle()
+  }
+
+  // Note: When there is no voice set to our SpeechSynthesisUtterance
+  // it will be given the default value.
+
+  // This function will help to cancel whatever voice it is
+  // speaking.
+  // We can pass a flag to the function so it doesn't restart
+  // itself.
+  function toggle(startOver = true) {
+    // First we call the method cancel on our speechSynthesis.
+    speechSynthesis.cancel()
+    // We add a conditional to check if startOver is true and
+    // then, we execute the speak method again passing the message. 
+    // This in order for every time the drop down option changes, it stops
+    // and starts over in the new given option.
+    if (startOver) {
+      speechSynthesis.speak(msg)
+    }
+  }
+
+  // Function which will be triggered each time a change happens
+  // in our options.
+  // Now we know which property is changing and what it is changed to.
+  function setOption() {
+    // Access corresponding name of the input that was changed and
+    // give it the new value.
+    msg[this.name] = this.value
+    toggle()
+  }
+
+  // Take the global variable speechSynthesis and add and event listener.
+  // It has an event called voiceschanged.
+  // When that happens populate the voices.
+  // This can't fire on load. Needs to wait for the specific event.
+  speechSynthesis.addEventListener('voiceschanged', populateVoices);
+
+  // Create an event listener for the voicesDropdown for whenever a 
+  // change occurs, it executes the setVoice function.
+  voicesDropdown.addEventListener('change', setVoice);
+
+  // Loop through all of our options and add an event listener for change
+  // which will trigger setOption function.
+  options.forEach(option => option.addEventListener('change', setOption));
+
+  // Add to the start button an event listener to run our toggle function.
+  speakButton.addEventListener('click', toggle);
+
+  // Same deal as above but passing an anonymous function as second
+  // argument returning our toggle function and setting
+  // the argument to false.
+  stopButton.addEventListener('click', () => toggle(false));
+
 </script>
 
 </body>
