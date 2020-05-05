@@ -21,14 +21,22 @@ body {
   padding: 40px;
   text-align: justify;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.05);
+  /* This is a 98% scale wrap for our div that contains the
+  paragraphs. */
   transform: scale(0.98);
   transition: transform 0.5s;
+}
+
+/* Makes the div containing the text stand out
+a little bit. */
+.fixed-nav .site-wrap {
+  transform: scale(1);
 }
 
 header {
   text-align: center;
   height: 50vh;
-  background: url(http://wes.io/iEgP/wow-so-deep.jpg) bottom center no-repeat;
+  background: url(https://upload.wikimedia.org/wikipedia/commons/d/d1/Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg) bottom center no-repeat;
   background-size: cover;
   display: flex;
   align-items: center;
@@ -50,6 +58,13 @@ nav {
   z-index: 1;
 }
 
+/* Make our nav bar fixed and give it a box-shadow
+so it stands out. */
+.fixed-nav nav {
+  position: fixed;
+  box-shadow: 0 5px rgba(0, 0, 0, 0.1)
+}
+
 nav ul {
   margin: 0;
   padding:0;
@@ -65,13 +80,32 @@ nav li {
   align-items: center;
 }
 
+/* The logo does not show because of the max-width and overflow
+properties, but it is there.
+In order to show it, we add styles to the li that has the class
+of logo. */
 li.logo {
   max-width: 0;
   overflow: hidden;
   background: white;
-  transition: all .5s;
+  /* Effect triggered by the change in the max-width. */
+  transition: all 2s;
   font-weight: 600;
   font-size: 30px;
+}
+
+/* Note: You can not animate something from width 0
+to auto. 
+It must be max-width. */
+
+/* Apply styles to the li with the class of logo once a
+fixed-nav class exist. 
+Since at the beginning the max-width is set to 0, once
+the value changes, it will trigger the transition effect and show
+on screen.
+*/
+.fixed-nav li.logo {
+  max-width: 500px;
 }
 
 li.logo a {

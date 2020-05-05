@@ -54,6 +54,43 @@
   </div>
 
 <script>
+  // Exercise about giving some effects to the nav bar.
+
+  // Get hold of the nav bar by it's id.
+  const nav = document.querySelector('#main');
+
+  // Get the Y value of the top of the nav bar.
+  const topOfNav = nav.offsetTop;
+
+  // Note: Creating a value that stores the above property
+  // helps us do it programmaticaly and not having to guess
+  // for the value of the element.
+
+  // Use a function that will execute itself each time the site
+  // is scrolled.
+  function fixNav() {
+    // If the window scrollY is equal or greater than the
+    // top position of the nav bar
+    if (window.scrollY >= topOfNav) {
+      // Add a padding top to the body equal to the
+      // height of our nav bar.
+      // Making an element fixed in a window stops using space, so
+      // other elements take that space and without adding the 
+      // height of navBar (the space it was using), it creates like a bounce effect.
+      document.body.style.paddingTop = nav.offsetHeight + 'px'
+      // Add a class to the body with the given styles in our css file.
+      document.body.classList.add('fixed-nav')
+    } else {
+      // If the condition is not met, remove the top padding and
+      // the class; returning everything to the initial state.
+      document.body.style.paddingTop = 0
+      document.body.classList.remove('fixed-nav')
+    }
+  }
+
+  // Add an event listener to the window, for when each time 
+  // it is scrolled, executes the fixNav function.
+  window.addEventListener('scroll', fixNav);
 
 </script>
 
