@@ -40,8 +40,87 @@
   }
 </style>
 
-<button></button>
+<button>Click me once!</button>
 <script>
+  // Exercise on event capture, propagation, bubblign and once.
+
+/*
+The propagation is bidirectional, from the window to the event target and back. 
+This propagation can be divided into three phases:
+
+From the window to the event target parent: this is the capture phase
+The event target itself: this is the target phase
+From the event target parent back to the window: the bubble phase
+
+All modern browsers have event bubbling as the default way of event flow.
+Modern browsers do not support event capturing by default but we can achieve that
+by code in Javascript, passing a third argument to the event listener. This
+third argument is an object which will have a property of capture to true.
+
+Event capture and event bubbling is the foundation of event handler
+and event delegation in Javascript.
+
+Event capture occurs when the browser is figuring what the user
+clicked on and goes from outtermost element to innermost until
+it finds the matching one.
+If capture is set to true, each time an evet listener with the same
+name is found in the path to the one that originated, it will trigger
+the event.
+
+Event bubbling is when the event that was triggered is reached 
+and to display the effect to the user goes all the way out from the
+nested element to the window.
+So, when event bubbling occurs, it will ripple all the way up through the DOM Tree
+and again, each time an event is found with the same name, as it is travelling back in the DOM Tree
+will be triggered.
+*/
+
+
+  const divs = document.querySelectorAll('div')
+
+  function logtext(event) {
+    console.log(this.classList.value)
+    // This stops event bubbling from happening, so only
+    // the event on the element that triggered it occurs.
+    // And not anymore events that are higher in the DOM Tree.
+    event.stopPropagation()
+  };
+
+  // Event listener can receive a third argument, which is an
+  // options object where we can tell if the capture property of the event
+  // will be true. Capture by default is false.
+  divs.forEach(div => div.addEventListener('click', logtext));
+
+/*
+  Example of an event listener with the third argument setting the capture property
+  to true. As said, by default is false. And with the once property set to true.
+  Once make the event only available to happen "once" and then unbinds itself.
+    divs.forEach(div => div.addEventListener('click', logtext, {
+      capture: true,
+      once: true
+    }));
+*/ 
+
+// Capture: Run the function on the way down.
+// Bubbling: Run the function on the way up.
+
+// There is also a property option of the third argument of the addEventListener
+// which is once.
+// If set to true, once the event occurs, it will unbind itself.
+// This is the same as removing an event listener:
+// div.removeEventListener('click', logText);
+// So it will listen for the click once, and it will unbind itself
+// so there is no further event to be triggered.
+
+// Setting a once property on our button. This can be helpfull for 
+// store checkouts in eCommerce sites.
+const button = document.querySelector('button')
+
+button.addEventListener('click', () => {
+  console.log('You can click me only once!')
+  }, {
+  once: true
+});
 
 </script>
 </body>
