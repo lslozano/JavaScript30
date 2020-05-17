@@ -34,8 +34,78 @@
     <div class="item item25">25</div>
   </div>
 
-<script>
-</script>
+  <script>
+    // Grab the div that has the items class.
+    const slider = document.querySelector('.items')
 
-  </body>
+    // Flag which will tell us if the mouse is down.
+    let isDown = false;
+
+    // The values of this variables will be set on the event listeners.
+    // startX - This variable helps to keep track of x position where the user first clicked down.
+    let startX; 
+    let scrollLeft;
+
+    // We need to create a lot of listeners for different events on the mouse:
+
+    slider.addEventListener('mousedown', (e) => {
+      // When a mouse is down set the value of our variable to true.
+      isDown = true
+      // Add the class list active. On mouseleave and mouseup event we remove it.
+      slider.classList.add('active')
+
+      // By passing the event to the function we can get a lot of data.
+      // One is exactly the x position of where our user clicked down within the div.
+      // Now we set the variable value to that.
+      startX = e.pageX - slider.offsetLeft 
+      // We need to track the offset left between the div and the page
+      // This means that it will give us the exact position and value if there would be a margin
+      // between the page and the div.
+      scrollLeft = slider.scrollLeft 
+      // We need to log where our initial scroll was.
+      // We keep it in a variable because it is going to move.
+      // scrollLeft get or sets the number of pixels that an element's content is scrolled from
+      // its left edge.
+    
+      // Note: We always need to go back to the initial state, where the first click down was made.
+    })
+
+    slider.addEventListener('mouseleave', () => {
+      // We need the isDown to only be true when is within the div.
+      isDown = false
+      slider.classList.remove('active')
+    })
+
+    slider.addEventListener('mouseup', () => {
+      // Again, change the value of isDown
+      isDown = false
+      slider.classList.remove('active')
+    })
+
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return // stop the function from running
+
+      e.preventDefault() // this will prevent from selecting text or doing other stuff.
+
+      // We need to figure out where the cursor is when they move it to the left or right.
+      // How far it is from the left edge or how close.
+      const x = e.pageX - slider.offsetLeft
+            
+      // This will tell us the value of how much we have deviated from the 
+      // initial space (initial x position where the user clicked).
+      const walk = (x - startX) * 3 // If we want to make the scroll faster, we can just multiply the value of our walk.
+
+      // We have the scrollLeft value captured, so now what we need to do is set the
+      // scrollLeft property of slider to the value of our captured scrollLeft minus walk.
+      // This will create the slide effect.
+      slider.scrollLeft = scrollLeft - walk
+
+      // Note: If you want to know specific values in a console log, 
+      // throw them into an object.
+
+    });
+
+  </script>
+
+</body>
 </html>

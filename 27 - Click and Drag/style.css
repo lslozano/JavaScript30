@@ -37,6 +37,11 @@ body {
   perspective: 500px;
 }
 
+/*
+When our div has both of this classes, this properties will be
+implemented.
+The background changes a bit and the scale creates like a highlight effect.
+*/
 .items.active {
   background: rgba(255,255,255,0.3);
   cursor: grabbing;
