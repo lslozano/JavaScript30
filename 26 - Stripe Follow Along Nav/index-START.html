@@ -5,13 +5,15 @@
   <title>Follow Along Nav</title>
 </head>
 <body>
-  <h2>Cool</h2>
+  <h1>LS</h1>
   <nav class="top">
+    <!--This div is the background that will be moving around.-->
     <div class="dropdownBackground">
       <span class="arrow"></span>
     </div>
 
     <ul class="cool">
+      <!--We need to hover over the li to be within it.-->
       <li>
         <a href="#">About Me</a>
         <div class="dropdown dropdown1">
@@ -130,6 +132,7 @@
   }
 
   .dropdown {
+    /* Opacity 0 and dislay none are the properties that make the dropdown content not to be displayed. */
     opacity: 0;
     position: absolute;
     overflow: hidden;
@@ -142,13 +145,33 @@
     display: none;
   }
 
+  /* 
+  You can't go from opacity 0 to 1 as well as display none to display block.
+  So this two need to occurr at separate times.
+
+  First, when we have a trigger-enter class, our dropdown is going to be set to
+  display: block.
+  */
+
   .trigger-enter .dropdown {
     display: block;
   }
 
+  /* Then, after the display block is set, with the setTimeout function that we added to the 
+  handlEnter function, we add the class of trigger-enter-active after 150 miliseconds to change
+  the opacity to 1.
+  This will result in a transition effect, which is already set in the dropdown class
+  to happen adfter 0.5 seconds and create the effect of the block appearing on the screen.
+   */
   .trigger-enter-active .dropdown {
     opacity: 1;
   }
+
+  /*
+  NOTE: This is how animation and transitions works on React and Angular. 
+  They just apply to separate classes when something enters or leaves. Then you use 
+  your CSS to add style. 
+  */
   
   .dropdownBackground {
     width: 100px;
@@ -164,9 +187,19 @@
     opacity:0;
   }
 
+  /* When our dropdownBackground also has a class of open, change the opacity
+  to 1.
+  This will make the white square show on screen.
+  */
   .dropdownBackground.open {
     opacity: 1;
   }
+
+  /*NOTE: 
+  classes separate with comma - styles will be applied to all of them
+  classes separate with space - style will be applied to the second class that is child of the first one. 
+  classes not separated by space - element must have both of those classes for the style to be applied.
+  */
 
   .arrow {
     position: absolute;
@@ -220,6 +253,85 @@
 </style>
 
 <script>
+  // First we need the triggers, which are the li.
+  // Grab all the direct descendants of the class cool which are li elements.
+  const triggers = document.querySelectorAll('.cool > li')
+
+  // Grab the dropdown background which is the div with the class of 
+  // .dropdownBackground. We only need an element, not a node list, so we use querySelector.
+  const background = document.querySelector('.dropdownBackground')
+
+  // Get the nav bar which has a class of .top.
+  const nav = document.querySelector('.top');
+
+  function handleEnter() {
+    // This refers to the instance we are in, so it will always refer to the whole li
+    // element we are positioned.
+    // We add a class to our current li element.
+    this.classList.add('trigger-enter')
+    // And set a timeout function to add another class.
+    // We use arrow function because we need that "this" value to be inherited from the parent function.
+    // REMEMBER: When an arrow function is used, the this value is inherited from the parent function.
+    // Set a conditional so the second class only adds if the first one is already there.
+    // This prevents for a trigger-enter-active class to exist even if you have already exit the dropdown.
+    // REMEBER: If the first condition evaluates to true, the second one runs.
+    setTimeout(() => { this.classList.contains('trigger-enter') && this.classList.add('trigger-enter-active')}, 150)
+    // Add the open class to our background div.
+    background.classList.add('open')
+
+    // To add the white background to each dropdown, we first need to figure
+    // out which dropdown it actually is.
+    // Get hold of the current dropdown we are in.
+    const dropdown = this.querySelector('.dropdown')
+    
+    // The getBoundingClientRect() method returns the size of an element and its position
+    // relative to the viewport.
+    // In this case, it returns the size of the corresponding dropdown.
+    const dropdownCoords = dropdown.getBoundingClientRect();
+
+    // We also need the information of where the nav bar is.
+    // This in order to offset our values correctly if there is an element
+    // previous to our nav bar.
+    const navCoords = nav.getBoundingClientRect();
+
+    // Create an object with the properties we need.
+    const coords = {
+      height: dropdownCoords.height,
+      width: dropdownCoords.width,
+      top: dropdownCoords.top - navCoords.top,
+      left: dropdownCoords.left - navCoords.left 
+      // Substract this two values to offset the position of the background when there are other elements before the navbar.
+    }
+
+    // REMEBER: Use setProperty() method to set a new value for a property on a CSS style declaration object.
+    // Set the properties to our background class.
+    // Pass the properties with a string interpolation to add the px at the end so they count as
+    // pixel values.
+    background.style.setProperty('width', `${coords.width}px`)
+    background.style.setProperty('height', `${coords.height}px`)
+
+    // Now we need to translate our background.
+    // In order to do so, we pass the transform property into our setProperty method
+    // which allows us to translate our element and as a second argument
+    // we pass the new translate value for our top and left properties.
+    // This needs to be done ine a single setProperty.
+    background.style.setProperty('transform', `translate(${coords.left}px, ${coords.top}px)`);
+
+  }
+
+  function handleLeave() {
+    // Do the opposite of the handleEnter function.
+    // Remove the classes, which turns back the property of display back to none and opacity to 0.
+    this.classList.remove('trigger-enter', 'trigger-enter-active')
+    // Remove open class from  the background div.
+    background.classList.remove('open')
+  }
+
+  // Create event listeners on each li element that will call the specific functions
+  // on mouse enter and leave events.
+  triggers.forEach(trigger => trigger.addEventListener('mouseenter', handleEnter))
+  triggers.forEach(trigger => trigger.addEventListener('mouseleave', handleLeave));
+
 </script>
 
 </body>
