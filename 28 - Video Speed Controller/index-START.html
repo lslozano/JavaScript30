@@ -9,12 +9,64 @@
 
   <div class="wrapper">
     <video class="flex" width="765" height="430" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" loop controls></video>
+    <!--The div with the class of speed is the container for the speed bar.-->
     <div class="speed">
+      <!--This will show the speed at which the video will be played. Will be modified by the user interaction.-->
       <div class="speed-bar">1×</div>
     </div>
   </div>
 
 <script>
+  // This exercise will work with mouse move events and HTML5 video.
+  // We will create an input to make our video go slower or faster.
+
+  // Get hold of our elements.
+  const speed = document.querySelector('.speed')
+  const bar = document.querySelector('.speed-bar')
+  const video = document.querySelector('.flex');
+
+  // Function that will take care of the logic for the move of the mouse in our speed div.
+  function handleMove(e) {
+    // Declare a constant that will store the value of y within our div.
+    // It will be composed of the position y on the page of the event minus the off set top of the div.
+    // We substract the off set because we don't know the exact position of the div element, since there could be
+    // another element before it.
+    const y = e.pageY - this.offsetTop
+
+    // offsetHeight returns the height of an element.
+    // By dividing the y value to this, we get a value from 0 to 1, with decimals, that can translate into
+    // the percentage of our bar.
+    const percent = y / this.offsetHeight
+
+    // We need a min and a max value for our speed.
+    const min = 0.4
+    const max = 4
+
+    // Declare a constant that will save our height value.
+    // We multiply percent to a hundred to turn it into a corresponding percent value from 1 to a 100.
+    // round method rounds a number to the nearest integer.
+    const height = Math.round(percent * 100) + '%'
+
+    // Get the corresponding value for the playback rate.
+    // We need it to be at a 0.4 at 0% and 4 at a 100%.
+    // To get that bounce we multiply the percent by the result of max - min plus the min value.
+    // This way we can correctly offset the playbackRate value.
+    const playbackRate = percent * (max - min) + min
+
+    // Give our bar height property the value of our height constant.
+    bar.style.height = height
+
+    // Set the text content to the value of playbackRate
+    // We need to apply the toFixed method to it in order for us to only have two decimals.
+    // We can add the x at the end.
+    bar.textContent = playbackRate.toFixed(2) + 'x'
+
+    // Take the playbackRate value and apply it to our video:
+    video.playbackRate = playbackRate
+  }
+
+  // Create an event listener for the speed constant that will trigger on mousemove and pass the function handleMove.
+  speed.addEventListener('mousemove', handleMove);
 </script>
 </body>
 </html>
