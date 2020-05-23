@@ -9,6 +9,7 @@
 <body>
 
   <h1>Whack-a-mole! <span class="score">0</span></h1>
+  <!--When you click this button, the function startGame() is called.-->
   <button onClick="startGame()">Start!</button>
 
   <div class="game">
@@ -36,6 +37,112 @@
   const holes = document.querySelectorAll('.hole');
   const scoreBoard = document.querySelector('.score');
   const moles = document.querySelectorAll('.mole');
+
+  // Create a a variable that will hold the lastHole that was returned.
+  let lastHole
+
+  // Variable to determine if game ends.
+  let timeUp = false
+
+  // Variable to hold our score.
+  let score = 0
+
+  // We need to create a function that gives us a random time between
+  // a specific max and min value. Plus, we need to offset this function
+  // with the min value.
+  // Use Math.round to round the nearest integer.
+  function randomTime(minimumTime, maximumTime) {
+    return Math.round(Math.random() * (maximumTime - minimumTime) + minimumTime)
+  }
+
+  // Create a function that will return a random hole from our divs.
+  // Avoid the repetion of a hole. Use recursion.
+  function randomHole(holesNodeList) {
+    const holeIndex = Math.floor(Math.random() * holesNodeList.length)
+    const presentHole = holesNodeList[holeIndex]
+    // If equal, use recursion to call the function again. Avoids getting the same hole.
+    if (presentHole == lastHole) {
+      console.log('Ups! I got the same number, need to use recursion!')
+      return randomHole(holesNodeList)
+    }
+
+    // Save reference to the last one that popped.
+    lastHole = presentHole
+    return presentHole
+  }
+
+  // We need a function called peep, that has a time value obtained from our 
+  // random time function and a random hole.
+  // Add to the hole the classList of up.
+  // This will trigger the CSS and set the value top of the mole to 0.
+  // After a timeout ot time, remove the classList of up frome the hole.
+  function peep() {
+    const time = randomTime(200, 2000)
+    const hole = randomHole(holes)
+    hole.classList.add('up')
+
+    // Set a time out function that when the time has passed, removes the class up from the hole
+    // and checks if timeUp is false, run again the function peep().
+    setTimeout(() => {
+      hole.classList.remove('up')
+      if (!timeUp) { peep() }
+    }, time)
+  }
+
+  // Create a function that starts the game. 
+  // Set the score of the game to 0.
+  // We need to have a variable that holds the score for us.
+  // The timeup variable must be false.
+  // Call the peep() function.
+  // Use an interval that after 10 seconds have passed changes
+  // the value of timeUp to true.
+  function startGame() {
+    // Reset scoreBoard and score to 0, timeUp to false.
+    scoreBoard.textContent = 0
+    timeUp = false
+    score = 0
+    peep()
+
+    // After 10 seconds, toggle timeUp to true, finishing the game.
+    setTimeout(() => { timeUp = true }, 10000)
+  }
+
+  // Create a function that is called bonk; which will augment the score when
+  // you click on a mole.
+  // Note: mouse click has a property called isTrusted, which prevents
+  // click simulation in javascript.
+  // So we need to be certain that the mouse click came from the user.
+  // When the isTrusted is true. Add to the score of the user.
+  // Pass the score value to the score board and
+  // remove the class list up from the mole.
+  // Remember, I need to refer to the instance, so use this to refer
+  // to the mole.
+  function bonk(e) {
+    if (!e.isTrusted) return // Faking click on a mole.
+    // On trusted click:
+    score++
+    this.parentNode.classList.remove('up')
+    scoreBoard.textContent = score
+  }
+
+  // For each mole we need to add an event listener on click that runs bonk function.
+  moles.forEach(mole => mole.addEventListener('click', bonk));
+
+/*
+IMPORTANT NOTE:
+I discovered that there is no use for getting hold of all the elements that have a class of hold, since you can add
+the class up directly to each mole. You just need to change the css to apply the style to every element that has the class of
+mole and up.
+
+If you use the holes node list you are not adding the class up directly to the mole element, but to the parent node element which
+is the div that contains the classes of hole and hole1, hole2, etc.
+So when you try to remove the class up when doing the click on the mole element, it won't work because that element doesn't have a 
+class up associated to it.
+You need to access the parent node of the instanced element and from there, remove the class up.
+
+
+*/
+
 
 </script>
 </body>
